@@ -12,9 +12,9 @@ logger.addHandler(ch)
 
 
 # Using a multimeter, measure the voltage of the receptacle where your 9V AC transformer will plug into. Enter the measured value below.
-GRID_VOLTAGE = 124.2
+GRID_VOLTAGE = 123.7
 # Using a multimeter, measure the output voltage of your AC transformer. Using the value on the label is not ideal and will lead to greater accuracy in the calculations.
-AC_TRANSFORMER_OUTPUT_VOLTAGE = 10.2
+AC_TRANSFORMER_OUTPUT_VOLTAGE = 10.75
 
 
 # Define Variables
@@ -29,21 +29,21 @@ ct5_channel = 7             # 3.5mm Input #2        | Unused
 
 # The values from running the software in "phase" mode should go below!
 ct_phase_correction = {
-    'ct0' : 1,
-    'ct1' : 1,
-    'ct2' : 1,
-    'ct3' : 1,
-    'ct4' : 1,
-    'ct5' : 1,
+    'ct0' : 1.03049130,
+    'ct1' : 1.06096664,
+    'ct2' : 1.69054096,
+    'ct3' : 1.50650598,
+    'ct4' : 1.02809211,
+    'ct5' : 1.77448827,
 }
 
 # AFTER phase correction is completed, these values are used in the final calibration for accuracy. See the documentation for more information.
 accuracy_calibration = {
-    'ct0' : 1,
+    'ct0' : 0.99458943,
     'ct1' : 1,
-    'ct2' : 1,
-    'ct3' : 1,
-    'ct4' : 1,
-    'ct5' : 1,
-    'AC'  : 1,
+    'ct2' : 1.08555779,
+    'ct3' : 1.13058419,
+    'ct4' : 0.91085271,
+    'ct5' : 0.96507438,
+    'AC'  : 1.07573350,
 }
