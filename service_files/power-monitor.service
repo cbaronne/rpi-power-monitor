@@ -1,0 +1,14 @@
+[Unit]
+Description=Respberry Pi Power Monitor
+After=influx.service
+Requires=influx.service
+
+[Service]
+Restart=always
+RestartSec=1
+User=pi
+ExecStart=/usr/bin/python3.7 /home/pi/rpi-power-monitor/power-monitor.py
+
+[Install]
+WantedBy=multi-user.target
+
