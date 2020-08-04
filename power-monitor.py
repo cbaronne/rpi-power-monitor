@@ -305,7 +305,7 @@ def calculate_power(samples, board_voltage):
             'pf'        : power_factor_1 
         },
         'ct2' : {
-            'type'      : 'consumption', 
+            'type'      : 'production', 
             'power'     : real_power_2,
             'current'   : rms_current_ct2,
             'voltage'   : rms_voltage_2,
@@ -397,7 +397,8 @@ def run_main():
     logger.info("Press Ctrl-c to quit...")
     # The following empty dictionaries will hold the respective calculated values at the end of each polling cycle, which are then averaged prior to storing the value to the DB.
     solar_power_values = dict(power=[], pf=[], current=[])
-    home_load_values = dict(power=[], pf=[], current=[])
+    ac_power_values = dict(power=[], pf=[], current=[])
+    home_load_values = dict(power=[], current=[])
     net_power_values = dict(power=[], current=[])
     ct0_dict = dict(power=[], pf=[], current=[])
     ct1_dict = dict(power=[], pf=[], current=[])
@@ -458,53 +459,102 @@ def run_main():
             # logger.debug(f"Line Voltage: {round(results['voltage'], 2)} V")
 
             # Prepare values for database storage 
-            grid_0_power = results['ct0']['power']    # 200A Main (left)
-            grid_1_power = results['ct1']['power']    # 200A Main (right)
-            grid_2_power = results['ct2']['power']    # 100A Main (top)
-            grid_4_power = results['ct4']['power']    # 100A Main (bottom)
-            grid_5_power = results['ct5']['power']    # Unused
+            grid_0_power  = results['ct0']['power']    # 200A Main (left)
+            grid_1_power  = results['ct1']['power']    # 200A Main (right)
+            solar_0_power = results['ct2']['power']    # Solar Connection (top)
+            solar_1_power = results['ct3']['power']    # Solar Connection (bottom)
+            ac_0_power    = results['ct4']['power']    # AC Connection (top)
+            ac_1_power    = results['ct5']['power']    # AC Connection (bottom)
 
-            grid_0_current = results['ct0']['current']
-            grid_1_current = results['ct1']['current']
-            grid_2_current = results['ct2']['current']
-            grid_4_current = results['ct4']['current']
-            grid_5_current = results['ct5']['current']
+            grid_0_current  = results['ct0']['current']
+            grid_1_current  = results['ct1']['current']
+            solar_0_current = results['ct2']['current']
+            solar_1_current = results['ct3']['current']
+            ac_0_current    = results['ct4']['current']
+            ac_1_current    = results['ct5']['current']
 
-            solar_power = results['ct3']['power']
-            solar_current = results['ct3']['current']
-            solar_pf = results['ct3']['pf']
+            grid_0_pf  = results['ct0']['pf']
+            grid_1_pf  = results['ct1']['pf']
+            solar_0_pf = results['ct2']['pf']
+            solar_1_pf = results['ct3']['pf']
+            ac_0_pf    = results['ct4']['pf']
+            ac_1_pf    = results['ct5']['pf']
 
             # Set solar power and current to zero if the solar power is under 20W.
-            if solar_power < 20:
-                solar_power = 0
-                solar_current = 0
-                solar_pf = 0
-            
-            # Determine if the system is net producing or net consuming right now by looking at the two panel mains.
-            # Since the current measured is always positive, we need to add a negative sign to the amperage value if we're exporting power.
+            if (solar_0_power < 20) and (solar_0_power > -20):
+                solar_0_power = 0
+                solar_0_current = 0
+                solar_0_pf = 0
+            if (solar_1_power < 20) and (solar_1_power > -20):
+                solar_1_power = 0
+                solar_1_current = 0
+                solar_1_pf = 0
+
+            # Set ac power and current to zero if the ac power is under 20W.
+            if (ac_0_power < 20) and (ac_0_power > -20):
+                ac_0_power = 0
+                ac_0_current = 0
+                ac_0_pf = 0
+            if (ac_1_power < 20) and (ac_1_power > -20):
+                ac_1_power = 0
+                ac_1_current = 0
+                ac_1_pf = 0
+
+            # Determine flow... If grid_0_power > 0, we are consuming. Otherwise we are producing.
+            current_status = "Net-Zero"
+            if grid_0_power > 20:
+                current_status = "Consuming"
+            elif grid_0_power < 20:
+                current_state = "Producing"
+                
+            # Make all the measurements positive.
             if grid_0_power < 0:
+                grid_0_power = grid_0_power * -1
                 grid_0_current = grid_0_current * -1
             if grid_1_power < 0:
+                grid_1_power = grid_1_power * -1
                 grid_1_current = grid_1_current * -1
-            if solar_power > 0:
-                solar_current = solar_current * -1
+            if solar_0_power < 0:
+                solar_0_power = solar_0_power * -1
+                solar_0_current = solar_0_current * -1
+            if solar_1_power < 0:
+                solar_1_power = solar_1_power * -1
+                solar_1_current = solar_1_current * -1
+            if ac_0_power < 0:
+                ac_0_power = ac_0_power * -1
+                ac_0_current = ac_0_current * -1
+            if ac_1_power < 0:
+                ac_1_power = ac_1_power * -1
+                ac_1_current = ac_1_current * -1
 
+            # Combine measurements
+            grid_power   = grid_0_power + grid_1_power
+            grid_current = grid_0_current + grid_1_current
+            grid_pf      = (grid_0_pf + grid_1_pf)/2
+
+            solar_power   = solar_0_power + solar_1_power
+            solar_current = solar_0_current + solar_1_current
+            solar_pf      = (solar_0_pf + solar_1_pf)/2
+
+            ac_power   = ac_0_power + ac_1_power
+            ac_current = ac_0_current + ac_1_current
+            ac_pf      = (ac_0_pf + ac_1_pf)/2
+                
             # Unless your specific panel setup matches mine exactly, the following four lines will likely need to be re-written:
-            home_consumption_power = grid_2_power + grid_4_power + grid_0_power + grid_1_power + solar_power
+            home_consumption_power = grid_power + solar_power
             net_power = home_consumption_power - solar_power
-            home_consumption_current = grid_2_current + grid_4_current + grid_0_current + grid_1_current - solar_current
-            net_current = grid_0_current + grid_1_current + grid_2_current + grid_4_current + solar_current
-
-            if net_power < 0:
-                current_status = "Producing"                                
-            else:
-                current_status = "Consuming"                
+            home_consumption_current = grid_current + solar_current
+            net_current = home_consumption_current - solar_current
 
             # Average 2 readings before sending to db
             if i < 2:
                 solar_power_values['power'].append(solar_power)
                 solar_power_values['current'].append(solar_current)
                 solar_power_values['pf'].append(solar_pf)
+
+                ac_power_values['power'].append(ac_power)
+                ac_power_values['current'].append(ac_current)
+                ac_power_values['pf'].append(ac_pf)
 
                 home_load_values['power'].append(home_consumption_power)
                 home_load_values['current'].append(home_consumption_current)
@@ -535,6 +585,7 @@ def run_main():
             else:   # Calculate the average, send the result to InfluxDB, and reset the dictionaries for the next 2 sets of data.
                 infl.write_to_influx(
                     solar_power_values,
+                    ac_power_values,
                     home_load_values,
                     net_power_values, 
                     ct0_dict,
@@ -546,7 +597,8 @@ def run_main():
                     poll_time,
                     i)
                 solar_power_values = dict(power=[], pf=[], current=[])
-                home_load_values = dict(power=[], pf=[], current=[])
+                ac_power_values = dict(power=[], pf=[], current=[])
+                home_load_values = dict(power=[], current=[])
                 net_power_values = dict(power=[], current=[])
                 ct0_dict = dict(power=[], pf=[], current=[])
                 ct1_dict = dict(power=[], pf=[], current=[])

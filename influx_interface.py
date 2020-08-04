@@ -25,6 +25,13 @@ class Point():
             self.p_type  = p_type    
             self.time    = kwargs['time']        
             
+        elif p_type == 'ac':
+            self.power   = kwargs['power']
+            self.current = kwargs['current']
+            self.pf      = kwargs['pf']
+            self.p_type  = p_type    
+            self.time    = kwargs['time']        
+            
         elif p_type == 'net': 
             self.power   = kwargs['power']
             self.current = kwargs['current']
@@ -60,13 +67,23 @@ class Point():
                 },
                 "time" : self.time
             }
+        elif self.p_type == 'ac': 
+            data = {
+                "measurement" : "ac",
+                "fields" : {
+                    "current" : self.current,
+                    "power": self.power,
+                    "pf": self.pf
+                },
+                "time" : self.time
+            }
         elif self.p_type == 'net':
-            if self.power < 0:
+            if self.power < 20:
                 status = 'Producing'
-            elif self.power > 0:
+            elif self.power > 20:
                 status = 'Consuming'
             else:
-                status = "No data"
+                status = "Net-Zero"
             data = {
                 "measurement" : "net",
                 "fields" : {
@@ -104,12 +121,15 @@ def init_db():
 def close_db():
     client.close()
 
-def write_to_influx(solar_power_values, home_load_values, net_power_values, ct0_dict, ct1_dict, ct2_dict, ct3_dict, ct4_dict, ct5_dict, poll_time, length):
+def write_to_influx(solar_power_values, ac_power_values, home_load_values, net_power_values, ct0_dict, ct1_dict, ct2_dict, ct3_dict, ct4_dict, ct5_dict, poll_time, length):
     
     # Calculate Averages
     avg_solar_power = sum(solar_power_values['power']) / length
     avg_solar_current = sum(solar_power_values['current']) / length
     avg_solar_pf = sum(solar_power_values['pf']) / length
+    avg_ac_power = sum(ac_power_values['power']) / length
+    avg_ac_current = sum(ac_power_values['current']) / length
+    avg_ac_pf = sum(ac_power_values['pf']) / length
     avg_home_power = sum(home_load_values['power']) / length
     avg_home_current = sum(home_load_values['current']) / length
     avg_net_power = sum(net_power_values['power']) / length
@@ -136,6 +156,7 @@ def write_to_influx(solar_power_values, home_load_values, net_power_values, ct0_
     # Create Points
     home_load = Point('home_load', power=avg_home_power, current=avg_home_current, time=poll_time)
     solar = Point('solar', power=avg_solar_power, current=avg_solar_current, pf=avg_solar_pf, time=poll_time)
+    ac = Point('ac', power=avg_ac_power, current=avg_ac_current, pf=avg_ac_pf, time=poll_time)
     net = Point('net', power=avg_net_power, current=avg_net_current, time=poll_time)
     ct0 = Point('ct', power=ct0_avg_power, current=ct0_avg_current, pf=ct0_avg_pf, time=poll_time, num=0)
     ct1 = Point('ct', power=ct1_avg_power, current=ct1_avg_current, pf=ct1_avg_pf, time=poll_time, num=1)
@@ -147,6 +168,7 @@ def write_to_influx(solar_power_values, home_load_values, net_power_values, ct0_
     points = [
         home_load.to_dict(),
         solar.to_dict(),
+        ac.to_dict(),
         net.to_dict(),
         ct0.to_dict(),
         ct1.to_dict(),
