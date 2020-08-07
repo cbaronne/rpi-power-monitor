@@ -501,7 +501,7 @@ def run_main():
                 ac_1_pf = 0
 
             # Determine flow... If grid_0_power > 0, we are consuming. Otherwise we are producing.
-            current_status = "Net-Zero"
+            current_status = "Equal"
             if grid_0_power > 20:
                 current_status = "Consuming"
             elif grid_0_power < 20:
@@ -541,10 +541,19 @@ def run_main():
             ac_pf      = (ac_0_pf + ac_1_pf)/2
                 
             # Unless your specific panel setup matches mine exactly, the following four lines will likely need to be re-written:
-            home_consumption_power = grid_power + solar_power
-            net_power = home_consumption_power - solar_power
-            home_consumption_current = grid_current + solar_current
-            net_current = home_consumption_current - solar_current
+            if (current_status == "Consuming"):
+                home_consumption_power = grid_power + solar_power
+                home_consumption_current = grid_current + solar_current
+                net_power = grid_power
+                net_current = grid_current
+            elif (current_state == "Producing"):
+                home_consumption_power = -grid_power + solar_power
+                home_consumption_current = -grid_current + solar_current
+                net_power = -grid_power
+                net_current = -grid_current
+            else:
+                net_power = 0
+                net_current = 0
 
             # Average 2 readings before sending to db
             if i < 2:

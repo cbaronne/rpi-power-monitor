@@ -83,7 +83,7 @@ class Point():
             elif self.power > 20:
                 status = 'Consuming'
             else:
-                status = "Net-Zero"
+                status = "Equal"
             data = {
                 "measurement" : "net",
                 "fields" : {
