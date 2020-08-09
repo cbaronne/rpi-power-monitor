@@ -508,24 +508,18 @@ def run_main():
                 current_state = "Producing"
                 
             # Make all the measurements positive.
-            if grid_0_power < 0:
-                grid_0_power = grid_0_power * -1
-                grid_0_current = grid_0_current * -1
-            if grid_1_power < 0:
-                grid_1_power = grid_1_power * -1
-                grid_1_current = grid_1_current * -1
-            if solar_0_power < 0:
-                solar_0_power = solar_0_power * -1
-                solar_0_current = solar_0_current * -1
-            if solar_1_power < 0:
-                solar_1_power = solar_1_power * -1
-                solar_1_current = solar_1_current * -1
-            if ac_0_power < 0:
-                ac_0_power = ac_0_power * -1
-                ac_0_current = ac_0_current * -1
-            if ac_1_power < 0:
-                ac_1_power = ac_1_power * -1
-                ac_1_current = ac_1_current * -1
+            grid_0_power = abs(grid_0_power)
+            grid_0_current = abs(grid_0_current)
+            grid_1_power = abs(grid_1_power)
+            grid_1_current = abs(grid_1_current)
+            solar_0_power = abs(solar_0_power)
+            solar_0_current = abs(solar_0_current)
+            solar_1_power = abs(solar_1_power)
+            solar_1_current = abs(solar_1_current)
+            ac_0_power = abs(ac_0_power)
+            ac_0_current = abs(ac_0_current)
+            ac_1_power = abs(ac_1_power)
+            ac_1_current = abs(ac_1_current)
 
             # Combine measurements
             grid_power   = grid_0_power + grid_1_power
