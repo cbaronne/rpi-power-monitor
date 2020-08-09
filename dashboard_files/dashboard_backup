@@ -39,15 +39,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#d44a3a",
+                "color": "semi-dark-red",
                 "value": null
               },
               {
-                "color": "#FF9830",
+                "color": "semi-dark-orange",
                 "value": 10
               },
               {
-                "color": "#73BF69",
+                "color": "semi-dark-green",
                 "value": 35
               }
             ]
@@ -137,15 +137,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#73BF69",
+                "color": "semi-dark-green",
                 "value": null
               },
               {
-                "color": "#FF9830",
+                "color": "semi-dark-orange",
                 "value": 30
               },
               {
-                "color": "#F2495C",
+                "color": "semi-dark-red",
                 "value": 50
               }
             ]
@@ -239,15 +239,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#299c46",
+                "color": "semi-dark-green",
                 "value": null
               },
               {
-                "color": "rgba(237, 129, 40, 0.89)",
+                "color": "semi-dark-orange",
                 "value": 0
               },
               {
-                "color": "#d44a3a",
+                "color": "semi-dark-red",
                 "value": 0
               }
             ]
@@ -658,5 +658,5 @@
   "timezone": "",
   "title": "Home Power Dashboard",
   "uid": "e8pYJFzgk",
-  "version": 35
+  "version": 38
 }
