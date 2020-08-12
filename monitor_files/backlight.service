@@ -1,0 +1,14 @@
+[Unit]
+Description=Backlight Dimmer
+Requires=graphical.target
+After=graphical.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/backlight_timeout 10 15 event0
+Restart=on-abort
+User=root
+Group=root
+
+[Install]
+WantedBy=graphical.target

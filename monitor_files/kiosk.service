@@ -1,0 +1,17 @@
+[Unit]
+Description=Grafana Dashboard
+Requires=graphical.target
+After=graphical.target
+
+[Service]
+Environment=DISPLAY=:0.0
+Environment=XAUTHORITY=/home/pi/.Xauthority
+Type=simple
+ExecStartPre=/home/pi/kiosk_pre.sh
+ExecStart=chromium-browser -noerrdialogs --no-default-browser-check --disable-infobars --kiosk "http://192.168.20.7:3000/d/e8pYJFzgk/home-power-dashboard?orgId=1&kiosk&refresh=5s"
+Restart=on-abort
+User=pi
+Group=pi
+
+[Install]
+WantedBy=graphical.target
