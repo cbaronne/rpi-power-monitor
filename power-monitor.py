@@ -5,7 +5,7 @@ import csv
 from math import sqrt
 import sys
 import influx_interface as infl
-from datetime import datetime
+from datetime import datetime, time
 from plotting import plot_data
 import pickle
 import os
@@ -400,6 +400,7 @@ def run_main():
     ac_power_values = dict(power=[], pf=[], current=[])
     home_load_values = dict(power=[], current=[])
     net_power_values = dict(power=[], current=[])
+    fnw_power_values = dict(power=[], current=[])
     ct0_dict = dict(power=[], pf=[], current=[])
     ct1_dict = dict(power=[], pf=[], current=[])
     ct2_dict = dict(power=[], pf=[], current=[])
@@ -480,31 +481,31 @@ def run_main():
             ac_0_pf    = results['ct4']['pf']
             ac_1_pf    = results['ct5']['pf']
 
-            # Set solar power and current to zero if the solar power is under 20W.
-            if (solar_0_power < 20) and (solar_0_power > -20):
+            # Set solar power and current to zero if the solar power is under 10W.
+            if (solar_0_power < 10) and (solar_0_power > -10):
                 solar_0_power = 0
                 solar_0_current = 0
                 solar_0_pf = 0
-            if (solar_1_power < 20) and (solar_1_power > -20):
+            if (solar_1_power < 10) and (solar_1_power > -10):
                 solar_1_power = 0
                 solar_1_current = 0
                 solar_1_pf = 0
 
-            # Set ac power and current to zero if the ac power is under 20W.
-            if (ac_0_power < 20) and (ac_0_power > -20):
+            # Set ac power and current to zero if the ac power is under 10W.
+            if (ac_0_power < 10) and (ac_0_power > -10):
                 ac_0_power = 0
                 ac_0_current = 0
                 ac_0_pf = 0
-            if (ac_1_power < 20) and (ac_1_power > -20):
+            if (ac_1_power < 10) and (ac_1_power > -10):
                 ac_1_power = 0
                 ac_1_current = 0
                 ac_1_pf = 0
 
             # Determine flow... If grid_0_power > 0, we are consuming. Otherwise we are producing.
             current_status = "Equal"
-            if grid_0_power > 20:
+            if grid_0_power > 10:
                 current_status = "Consuming"
-            elif grid_0_power < 20:
+            elif grid_0_power < 10:
                 current_state = "Producing"
                 
             # Make all the measurements positive.
@@ -549,6 +550,29 @@ def run_main():
                 net_power = 0
                 net_current = 0
 
+            # Calulate Free Nights/Weekend Power...
+            weekday = datetime.today().weekday()
+            if (weekday < 5):
+                is_weekend = 0
+            else:
+                is_weekend = 1
+            cur_time = datetime.now().time()
+            if (cur_time >= time(22,00) and cur_time < time(6,00)):
+                is_night = 1
+            else:
+                is_night = 0
+            
+            if (is_night or is_weekend):
+                if (current_state == "Producing"):
+                    fnw_power = -solar_power
+                    fnw_current = -solar_current
+                else:
+                    fnw_power = 0
+                    fnw_current = 0
+            else:
+                fnw_power = net_power
+                fnw_current = net_current
+
             # Average 2 readings before sending to db
             if i < 2:
                 solar_power_values['power'].append(solar_power)
@@ -563,6 +587,8 @@ def run_main():
                 home_load_values['current'].append(home_consumption_current)
                 net_power_values['power'].append(net_power)
                 net_power_values['current'].append(net_current)
+                fnw_power_values['power'].append(fnw_power)
+                fnw_power_values['current'].append(fnw_current)
                 
                 ct0_dict['power'].append(results['ct0']['power'])
                 ct0_dict['current'].append(results['ct0']['current'])
@@ -591,6 +617,7 @@ def run_main():
                     ac_power_values,
                     home_load_values,
                     net_power_values, 
+                    fnw_power_values, 
                     ct0_dict,
                     ct1_dict,
                     ct2_dict,
@@ -603,6 +630,7 @@ def run_main():
                 ac_power_values = dict(power=[], pf=[], current=[])
                 home_load_values = dict(power=[], current=[])
                 net_power_values = dict(power=[], current=[])
+                fnw_power_values = dict(power=[], current=[])
                 ct0_dict = dict(power=[], pf=[], current=[])
                 ct1_dict = dict(power=[], pf=[], current=[])
                 ct2_dict = dict(power=[], pf=[], current=[])
