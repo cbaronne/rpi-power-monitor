@@ -12,7 +12,7 @@
       }
     ]
   },
-  "editable": true,
+  "editable": false,
   "gnetId": null,
   "graphTooltip": 0,
   "id": 1,
@@ -39,15 +39,35 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-red",
+                "color": "dark-red",
                 "value": null
               },
               {
-                "color": "semi-dark-orange",
+                "color": "semi-dark-red",
+                "value": 5
+              },
+              {
+                "color": "light-red",
                 "value": 10
               },
               {
+                "color": "super-light-red",
+                "value": 15
+              },
+              {
+                "color": "super-light-green",
+                "value": 20
+              },
+              {
+                "color": "light-green",
+                "value": 25
+              },
+              {
                 "color": "semi-dark-green",
+                "value": 30
+              },
+              {
+                "color": "dark-green",
                 "value": 35
               }
             ]
@@ -137,16 +157,40 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-green",
+                "color": "dark-green",
                 "value": null
               },
               {
-                "color": "semi-dark-orange",
+                "color": "dark-green",
+                "value": 0
+              },
+              {
+                "color": "semi-dark-green",
+                "value": 10
+              },
+              {
+                "color": "light-green",
+                "value": 20
+              },
+              {
+                "color": "super-light-green",
                 "value": 30
               },
               {
-                "color": "semi-dark-red",
+                "color": "super-light-red",
+                "value": 40
+              },
+              {
+                "color": "light-red",
                 "value": 50
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 60
+              },
+              {
+                "color": "dark-red",
+                "value": 70
               }
             ]
           },
@@ -158,108 +202,6 @@
         "h": 3,
         "w": 6,
         "x": 6,
-        "y": 0
-      },
-      "hideTimeOverride": true,
-      "id": 10,
-      "interval": null,
-      "links": [],
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "sum"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "7.1.1",
-      "targets": [
-        {
-          "groupBy": [],
-          "measurement": "home_load",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "power"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "integral"
-              },
-              {
-                "params": [
-                  " / 3600000"
-                ],
-                "type": "math"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Home Consumption",
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "decimals": 2,
-          "mappings": [
-            {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
-            }
-          ],
-          "nullValueMode": "connected",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "semi-dark-green",
-                "value": null
-              },
-              {
-                "color": "semi-dark-orange",
-                "value": 0
-              },
-              {
-                "color": "semi-dark-red",
-                "value": 0
-              }
-            ]
-          },
-          "unit": "kwatth"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 6,
-        "x": 12,
         "y": 0
       },
       "hideTimeOverride": true,
@@ -316,7 +258,129 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Net Energy",
+      "title": "Daily Net Energy",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 2,
+          "mappings": [
+            {
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-green",
+                "value": null
+              },
+              {
+                "color": "semi-dark-green",
+                "value": 20
+              },
+              {
+                "color": "light-green",
+                "value": 30
+              },
+              {
+                "color": "super-light-green",
+                "value": 40
+              },
+              {
+                "color": "super-light-red",
+                "value": 50
+              },
+              {
+                "color": "light-red",
+                "value": 60
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 70
+              },
+              {
+                "color": "dark-red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "kwatth"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 12,
+        "y": 0
+      },
+      "hideTimeOverride": true,
+      "id": 16,
+      "interval": null,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.1.1",
+      "targets": [
+        {
+          "groupBy": [],
+          "measurement": "fnw",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "power"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "integral"
+              },
+              {
+                "params": [
+                  " / 3600000"
+                ],
+                "type": "math"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Billed Net Energy",
       "transparent": true,
       "type": "stat"
     },
@@ -349,16 +413,32 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#299c46",
+                "color": "dark-green",
                 "value": null
               },
               {
-                "color": "rgba(237, 129, 40, 0.89)",
+                "color": "dark-green",
+                "value": -5
+              },
+              {
+                "color": "semi-dark-green",
+                "value": -2.5
+              },
+              {
+                "color": "light-green",
                 "value": 0
               },
               {
-                "color": "#d44a3a",
-                "value": 0
+                "color": "light-red",
+                "value": 2.5
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 5
+              },
+              {
+                "color": "dark-red",
+                "value": 20
               }
             ]
           },
@@ -589,7 +669,18 @@
       ],
       "thresholds": [],
       "timeFrom": null,
-      "timeRegions": [],
+      "timeRegions": [
+        {
+          "colorMode": "green",
+          "fill": true,
+          "fillColor": "rgba(234, 112, 112, 0.12)",
+          "from": "3:00",
+          "line": false,
+          "lineColor": "rgba(237, 46, 24, 0.60)",
+          "op": "time",
+          "to": "11:00"
+        }
+      ],
       "timeShift": null,
       "title": "",
       "tooltip": {
@@ -630,7 +721,7 @@
       }
     }
   ],
-  "refresh": "5s",
+  "refresh": "10s",
   "schemaVersion": 26,
   "style": "dark",
   "tags": [],
@@ -655,8 +746,8 @@
       "1d"
     ]
   },
-  "timezone": "",
+  "timezone": "browser",
   "title": "Home Power Dashboard",
   "uid": "e8pYJFzgk",
-  "version": 38
+  "version": 49
 }
