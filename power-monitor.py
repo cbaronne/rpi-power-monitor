@@ -563,9 +563,9 @@ def run_main():
                 is_night = 0
             
             if (is_night or is_weekend):
-                if (current_state == "Producing"):
-                    fnw_power = -solar_power
-                    fnw_current = -solar_current
+                if (net_power < 0):
+                    fnw_power = net_power
+                    fnw_current = net_current
                 else:
                     fnw_power = 0
                     fnw_current = 0
