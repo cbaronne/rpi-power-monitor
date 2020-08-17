@@ -84,9 +84,9 @@ class Point():
                 "time" : self.time
             }
         elif self.p_type == 'net':
-            if self.power < 20:
+            if self.power < 10:
                 status = 'Producing'
-            elif self.power > 20:
+            elif self.power > 10:
                 status = 'Consuming'
             else:
                 status = "Equal"
@@ -102,9 +102,9 @@ class Point():
                 "time" : self.time
             }
         elif self.p_type == 'fnw':
-            if self.power < 20:
+            if self.power < 10:
                 status = 'Producing'
-            elif self.power > 20:
+            elif self.power > 10:
                 status = 'Consuming'
             else:
                 status = "Equal"

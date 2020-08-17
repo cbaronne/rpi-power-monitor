@@ -557,7 +557,7 @@ def run_main():
             else:
                 is_weekend = 1
             cur_time = datetime.now().time()
-            if (cur_time >= time(22,00) and cur_time < time(6,00)):
+            if (cur_time >= time(22,00) or cur_time < time(6,00)):
                 is_night = 1
             else:
                 is_night = 0
